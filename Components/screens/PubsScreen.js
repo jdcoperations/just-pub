@@ -4,11 +4,82 @@ import * as Font from 'expo-font';
 
 import Colors from '../../Constants/colors';
 
-import exampleData from '../../Constants/pubs.json';
-import { ScrollView } from 'react-native-gesture-handler';
+import { PUBS } from '../../data/pubs';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Button from '../Button/Button';
 
-export default class WorkoutScreen extends React.Component {
+const PubsScreen = props => {
+    const renderGridItem = itemData => {
+        return (
+            <TouchableOpacity
+                style={styles.gridItem}
+                onPress={() => {
+                    props.navigation.navigate({
+                        routeName: 'Pub',
+                        params: {
+                            pubId: itemData.item.id
+                        }
+                    });
+                }}>
+                <View>
+                    <Image style={styles.imgStyle} source={{
+                        uri: `${itemData.item.ImageUrl}`
+                    }} />
+                    <Text style={styles.headline}>{itemData.item.Name}</Text>
+                </View>
+            </TouchableOpacity>
+        );
+    };
+    return (
+        <FlatList
+            keyExtractor={(item, index) => item.id}
+            data={PUBS}
+            renderItem={renderGridItem}
+            numColumns={1}
+        />
+    );
+};
+
+PubsScreen.navigationOptions = {
+    headerTitle: 'Pubs',
+};
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    gridItem: {
+        flex: 1,
+        margin: 15,
+        margin: 30,
+        padding: 20,
+        borderColor: Colors.darkest,
+        borderRadius: 10,
+        borderWidth: 1,
+        width: '80%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.dark,
+    },
+    imgStyle: {
+        height: 150,
+        width: 150,
+    },
+    headline: {
+        marginTop: 10,
+        fontWeight: 'bold',
+        fontSize: 30,
+        color: 'white',
+        fontFamily: 'Baloo',
+        justifyContent: "center",
+    }
+});
+
+export default PubsScreen;
+
+/* export default class WorkoutScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -209,4 +280,4 @@ const styles = StyleSheet.create({
     detailTxt: {
         paddingTop: 20,
     }
-});
+}); */

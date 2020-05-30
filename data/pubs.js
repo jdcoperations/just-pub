@@ -1,0 +1,8 @@
+import PubModel from  '../models/pubModel';
+
+export const PUBS = [
+    new PubModel('p1', 'The Bell', 'The Street, Hemsby, NR12 3RN', 'https://scontent-prg1-1.xx.fbcdn.net/v/t1.0-9/45170194_523492404834807_7287912404359315456_n.jpg?_nc_cat=106&_nc_sid=85a577&_nc_ohc=gqJzf7-VOO0AX-Ma9Nz&_nc_ht=scontent-prg1-1.xx&oh=c1c02830e3dfaddb60cab2fc36c0e24a&oe=5EE54882'),
+    new PubModel('p2', 'Dutchys', 'California', 'https://scontent-prg1-1.xx.fbcdn.net/v/t1.0-9/559406_235334296581503_68392542_n.jpg?_nc_cat=107&_nc_sid=85a577&_nc_ohc=vG7hOQGp-vEAX9vjxH5&_nc_ht=scontent-prg1-1.xx&oh=11d1789614d69033586fb0fe7dc29b5c&oe=5EE4A8D9'),
+    new PubModel('p3', 'The Jolly Farmers', 'The Road, Ormesby', 'https://scontent-prg1-1.xx.fbcdn.net/v/t1.0-9/18198677_1829261343766604_4024376218316517923_n.jpg?_nc_cat=111&_nc_sid=7aed08&_nc_ohc=NCMs75SbaTcAX_EhDk_&_nc_ht=scontent-prg1-1.xx&oh=880a7b9c82a8da2996e94b65727da287&oe=5EE5BBD0'),
+    new PubModel('p4', 'The Grange', 'Caister Road, Ormesby', 'https://scontent-prg1-1.xx.fbcdn.net/v/t1.0-9/12189771_1249311215086422_7782640348191632088_n.jpg?_nc_cat=108&_nc_sid=85a577&_nc_ohc=a4X0S1AF2NEAX_zF0EP&_nc_ht=scontent-prg1-1.xx&oh=b3bf1e592571d71590fef0bd4413db7a&oe=5EE5FDFE')
+];

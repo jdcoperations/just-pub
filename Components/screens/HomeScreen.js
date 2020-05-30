@@ -1,63 +1,73 @@
 import React from 'react';
-import { StyleSheet, 
-  Text, 
-  View, 
-  TouchableOpacity, 
-  Alert,
-  Image} from 'react-native';
-import Expo from 'expo';
-import FBLoginButton from '../../FBLoginButton';
-import * as Facebook from 'expo-facebook';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, TouchableHighlightBase } from 'react-native';
 import * as Font from 'expo-font';
 
-import Button from '../Button/Button';
 import Colors from '../../Constants/colors';
-import NavBar from '../NavBar/NavBar';
 
-import {LandingImg} from '../../assets/images/IconBeer.png';
+import { PUBS } from '../../data/pubs';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
+import Button from '../Button/Button';
 
+const HomeScreen = props => {
+    
+    return (
+        <View style={styles.screen}>
+            <Text style={styles.headline}> Welcome to Just-Pub!</Text>
+            <Image style={styles.imgStyle} source={require('../../assets/images/IconBeer.png')}/>
+            <Button onPress={() => {
+                    props.navigation.navigate({
+                        routeName: 'Pubs',
+                        
+                    });}}>View Pubs</Button>
+            <Button onPress={() => {
+                    props.navigation.navigate({
+                        routeName: 'SignIn',
+                        
+                    });}}>Sign In / Register</Button>
+        </View>
+    );
+};
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null, errorInfo: null };
-  }
-  
-  componentDidCatch(error, errorInfo) {
-    // Catch errors in any components below and re-render with error message
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    })
-    // You can also log error messages to an error reporting service here
-  }
+HomeScreen.navigationOptions = {
+    headerTitle: 'Just-Pub!',
+};
 
-  getDerivedStatusFromError(error, errorInfo){
-      this.setState({
-          error: error,
-          errorInfo: errorInfo
-      })
-  }
-  
-  render() {
-    if (this.state.errorInfo) {
-      // Error path
-      return (
-        <div>
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error && this.state.error.toString()}
-            <br />
-            {this.state.errorInfo.componentStack}
-          </details>
-        </div>
-      );
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    gridItem: {
+        flex: 1,
+        margin: 15,
+        margin: 30,
+        padding: 20,
+        borderColor: Colors.darkest,
+        borderRadius: 10,
+        borderWidth: 1,
+        width: '80%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.dark,
+    },
+    imgStyle: {
+        height: 150,
+        width: 150,
+    },
+    headline: {
+        marginTop: 10,
+        fontWeight: 'bold',
+        fontSize: 30,
+        color: Colors.darkest,
+        fontFamily: 'Baloo',
+        justifyContent: "center",
     }
-    // Normally, just render children
-    return this.props.children;
-  }  
-}
+});
 
+export default HomeScreen;
+
+/* 
 export default class App extends React.Component {
   async componentDidMount() {
     await Font.loadAsync({
@@ -163,7 +173,13 @@ export default class App extends React.Component {
         
         <View style={styles.buttonLine}>
           <Button onPress={this.logIn}>Sign In</Button>
-          <Button onPress={this.guest}>Register</Button>
+          <Button onPress={() => {
+                    props.navigation.navigate({
+                        routeName: 'Pub',
+                        params: {
+                            pubId: itemData.item.id
+                        }
+                    });}}>View Pubs</Button>
         </View>
           {this.renderFaceBookUserInfo()}
       </View>
@@ -194,9 +210,9 @@ export default class App extends React.Component {
   };
 
     
-}
+} */
 
-const styles = StyleSheet.create({
+/* const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
@@ -258,4 +274,4 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     
   }
-});
+}); */
