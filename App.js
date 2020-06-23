@@ -3,8 +3,10 @@ import { Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { enableScreens } from 'react-native-screens';
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+
 
 import PubsNavigator from './Navigation/pubsNavigator';
 import productsReducer from './store/reducers/products';
@@ -18,7 +20,7 @@ const rootReducer = combineReducers({
 });
 enableScreens();
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
  
 const fetchFonts = () => {
   /* return Font.loadAsync({

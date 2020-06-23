@@ -202,6 +202,8 @@ const poscreen = props => {
 
 poscreen.navigationOptions = props => {
     const menuClass = props.navigation.getParam('menuClass');
+    const PubId = props.navigation.getParam('pubId');
+    console.log('poscreen-nav:' + PubId);
     return {
       headerRight: () =>
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
@@ -209,7 +211,12 @@ poscreen.navigationOptions = props => {
             title="Tray"
             iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
             onPress={() => {
-                props.navigation.navigate('Tray')
+                props.navigation.navigate({
+                    routeName: 'Tray',
+                    params: {
+                      pubId: PubId
+                    }
+                  });
             }}/>
         </HeaderButtons>
       ,

@@ -21,7 +21,8 @@ const MenuDetail = props => {
                     props.navigation.navigate({
                         routeName: 'ProductOpts2',
                         params: {
-                            product: itemData
+                            product: itemData,
+                            pubId: PubId
                         }
                     });
                 }}>
