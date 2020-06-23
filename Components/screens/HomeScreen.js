@@ -14,16 +14,18 @@ const HomeScreen = props => {
         <View style={styles.screen}>
             <Text style={styles.headline}> Welcome to Just-Pub!</Text>
             <Image style={styles.imgStyle} source={require('../../assets/images/IconBeer.png')}/>
+            <Text style={styles.headline2}>
+                Order your drinks from the comfort of your table and pay by contactless when your drinks are delivered.
+            </Text>
+            <Text style={styles.headline2}>
+                Please scan the pubs QR code to continue.
+            </Text>
             <Button onPress={() => {
                     props.navigation.navigate({
-                        routeName: 'Pubs',
+                        routeName: 'scan',
                         
-                    });}}>View Pubs</Button>
-            <Button onPress={() => {
-                    props.navigation.navigate({
-                        routeName: 'SignIn',
-                        
-                    });}}>Sign In / Register</Button>
+                    });}}>Scan Code</Button>
+           
         </View>
     );
 };
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
     imgStyle: {
         height: 150,
         width: 150,
+        marginVertical: 20
     },
     headline: {
         marginTop: 10,
@@ -62,7 +65,15 @@ const styles = StyleSheet.create({
         color: Colors.darkest,
         fontFamily: 'Baloo',
         justifyContent: "center",
-    }
+    },
+    headline2: {
+      margin: 15,
+      fontWeight: 'bold',
+      fontSize: 20,
+      color: Colors.darkest,
+      fontFamily: 'Baloo',
+      justifyContent: "center",
+  }
 });
 
 export default HomeScreen;

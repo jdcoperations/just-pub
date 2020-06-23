@@ -1,7 +1,7 @@
 class pricesModel {
     constructor(size, price) {
         this.size = size;
-        this.price = prie;
+        this.price = price;
     };
 }
 

@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, TouchableHighlightBase } from 'react-native';
 import * as Font from 'expo-font';
-
-import Colors from '../../Constants/colors';
-
-import { CATEGORIES } from '../../data/categories';
-import { ScrollView, FlatList } from 'react-native-gesture-handler';
-import Button from '../Button/Button';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import HeaderButton from '../Button/HeaderButton';
 
-const MenuScreen = props => {
+import Colors from '../../Constants/colors';
+
+import { MENU } from '../../data/menus';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
+import Button from '../Button/Button';
+
+const MenuDetail = props => {
     
     const renderGridItem = itemData => {
         
@@ -19,57 +19,57 @@ const MenuScreen = props => {
                 style={styles.gridItem}
                 onPress={() => {
                     props.navigation.navigate({
-                        routeName: 'Menu2',
+                        routeName: 'ProductOpts2',
                         params: {
-                            pubId: PubId,
-                            menuClass: itemData.item.name
-
+                            product: itemData
                         }
                     });
                 }}>
                 <View>
-                    <Image style={styles.imgStyle} source={{
-                        uri: `${itemData.item.iconUrl}`
-                    }} />
-                    <Text style={styles.headline}>{itemData.item.name}</Text>
+                    
+                    <Text style={styles.headline}>{itemData.item.title}</Text>
                 </View>
             </TouchableOpacity>
         );
     };
     const PubId = props.navigation.getParam('pubId');
+    const menuClass = props.navigation.getParam('menuClass');
     
+    
+    const FILTERED_ITEMS = MENU.filter(menuItem => menuItem.pubId.indexOf(props.navigation.getParam('pubId')) >= 0 && menuItem.classification.indexOf(props.navigation.getParam('menuClass')) >= 0);
     
     return (
         <FlatList
-            keyExtractor={(item, index) => item.name}
-            data={CATEGORIES}
+            keyExtractor={(item, index) => item.id}
+            data={FILTERED_ITEMS}
             renderItem={renderGridItem}
-            numColumns={2}
+            numColumns={1}
         />
     );
 };
 
-MenuScreen.navigationOptions = navigationData => {
+MenuDetail.navigationOptions = navigationData => {
+    const menuClass = navigationData.navigation.getParam('menuClass');
     const PubId = navigationData.navigation.getParam('pubId');
-      return {
-          headerRight: () =>
-          <HeaderButtons HeaderButtonComponent={HeaderButton}>
-            <Item
-              title="Tray"
-              iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-              onPress={() => {
+    return {
+      headerRight: () =>
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Tray"
+            iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+            onPress={() => {
                 navigationData.navigation.navigate({
                     routeName: 'Tray',
                     params: {
                       pubId: PubId
                     }
                   });
-              }}/>
-          </HeaderButtons>
-        ,
-        headerTitle: 'Menu'
-            }
-};
+            }}/>
+        </HeaderButtons>
+      ,
+      headerTitle: menuClass
+    };
+  };
 
 const styles = StyleSheet.create({
     screen: {
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.darkest,
         borderRadius: 10,
         borderWidth: 1,
-        width: '80%',
+        width: '90%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: Colors.dark,
@@ -103,4 +103,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default MenuScreen;
+export default MenuDetail;

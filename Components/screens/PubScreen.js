@@ -1,5 +1,8 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, Image, Platform, Alert } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+
+import HeaderButton from '../../Components/Button/HeaderButton';
 
 import { PUBS } from '../../data/pubs';
 
@@ -40,6 +43,21 @@ PubScreen.navigationOptions = navigationData => {
   const selectedPub = PUBS.find(pub => pub.id === PubId);
 
   return {
+    headerRight: () => 
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Tray"
+          iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+          onPress={() => {
+              navigationData.navigation.navigate({
+                routeName: 'Tray',
+                params: {
+                  pubId: PubId
+                }
+              });
+          }}/>
+      </HeaderButtons>
+    ,
     headerTitle: selectedPub.Name
   };
 };

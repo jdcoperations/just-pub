@@ -3,11 +3,23 @@ import { Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
 import { enableScreens } from 'react-native-screens';
+import { createStore, combineReducers } from 'redux';
+import { Provider } from 'react-redux';
 
 import PubsNavigator from './Navigation/pubsNavigator';
+import productsReducer from './store/reducers/products';
+import cartReducer from './store/reducers/cart';
+import ordersReducer from './store/reducers/orders';
 
+const rootReducer = combineReducers({
+  products: productsReducer,
+  cart: cartReducer,
+  orders: ordersReducer
+});
 enableScreens();
 
+const store = createStore(rootReducer);
+ 
 const fetchFonts = () => {
   /* return Font.loadAsync({
     'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
@@ -30,7 +42,11 @@ export default function App() {
     );
   }
 
-  return <PubsNavigator />;
+  return (
+    <Provider store={store}>
+      <PubsNavigator />
+    </Provider>
+  );
 }
 
 /* import * as React from 'react';
