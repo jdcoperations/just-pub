@@ -1,84 +1,200 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, TouchableHighlightBase } from 'react-native';
+import React, { useReducer, useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, ImageBackground } from 'react-native';
 import * as Font from 'expo-font';
-
+import { useSelector, useDispatch } from 'react-redux';
 import Colors from '../../Constants/colors';
 
 import { PUBS } from '../../data/pubs';
 import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Button from '../Button/Button';
+import HeaderButton from '../Button/HeaderButton';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import Input from '../Input';
+import Card from '../Card';
 
-const HomeScreen = props => {
-    
-    return (
-        <View style={styles.screen}>
-            <Text style={styles.headline}> Welcome to Just-Pub!</Text>
-            <Image style={styles.imgStyle} source={require('../../assets/images/IconBeer.png')}/>
-            <Text style={styles.headline2}>
-                Order your drinks from the comfort of your table and pay by contactless when your drinks are delivered.
-            </Text>
-            <Text style={styles.headline2}>
-                Please scan the pubs QR code to continue.
-            </Text>
-            <Button onPress={() => {
-                    props.navigation.navigate({
-                        routeName: 'scan',
-                        
-                    });}}>Scan Code</Button>
-           
-        </View>
-    );
+const drinkImage = require('../../assets/images/pint.jpg');
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDTE';
+const image = { uri: "" };
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputvalidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;
 };
 
-HomeScreen.navigationOptions = {
+const HomeScreen = props => {
+  const dispatch = useDispatch();
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      email: '',
+      password: ''
+    },
+    inputValidities: {
+      email: false,
+      password: false
+    },
+    formIsValid: false
+  });
+
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: inputIdentifier
+      });
+    },
+    [dispatchFormState]
+  );
+  return (
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={100}
+      style={styles.screen}>
+
+
+
+      <ImageBackground
+        source={drinkImage}
+        style={styles.image}>
+        <Card style={styles.center}>
+          <View style={styles.textBG}>
+            <Text style={styles.headline}> Welcome to Just-Pub!</Text>
+            {/*  <Image style={styles.imgStyle} source={require('../../assets/images/IconBeer.png')} /> */}
+            <Text style={styles.headline2}>
+              Order your drinks from the comfort of your table and pay by contactless when your drinks are delivered.
+            </Text>
+            <Text style={styles.headline2}>
+              Please Login/Signup to continue.
+            </Text>
+          </View>
+        </Card>
+        <Button onPress={() => {
+          props.navigation.navigate({
+            routeName: 'Login',
+
+          });
+
+        }}>Login/Signup</Button>
+      </ImageBackground>
+
+
+
+    </KeyboardAvoidingView>
+  );
+};
+
+HomeScreen.navigationOptions = navData => {
+  return {
     headerTitle: 'Just-Pub!',
+    headerLeft: () => {
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Menu"
+          iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+          onPress={() => {
+            navData.navigation.toggleDrawer();
+          }}
+        />
+      </HeaderButtons>
+    }
+  };
 };
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    gridItem: {
-        flex: 1,
-        margin: 15,
-        margin: 30,
-        padding: 20,
-        borderColor: Colors.darkest,
-        borderRadius: 10,
-        borderWidth: 1,
-        width: '80%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.dark,
-    },
-    imgStyle: {
-        height: 150,
-        width: 150,
-        marginVertical: 20
-    },
-    headline: {
-        marginTop: 10,
-        fontWeight: 'bold',
-        fontSize: 30,
-        color: Colors.darkest,
-        fontFamily: 'Baloo',
-        justifyContent: "center",
-    },
-    headline2: {
-      margin: 15,
-      fontWeight: 'bold',
-      fontSize: 20,
-      color: Colors.darkest,
-      fontFamily: 'Baloo',
-      justifyContent: "center",
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 30,
+    marginHorizontal: 20
+  },
+  gridItem: {
+    flex: 1,
+    margin: 15,
+    margin: 30,
+    padding: 20,
+    borderColor: Colors.darkest,
+    borderRadius: 10,
+    borderWidth: 1,
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.dark,
+  },
+  imgStyle: {
+    height: 150,
+    width: 150,
+    marginVertical: 20
+  },
+  headline: {
+    marginTop: 10,
+    fontWeight: 'bold',
+    fontSize: 30,
+    color: Colors.darkest,
+    fontFamily: 'Baloo-bold',
+    justifyContent: "center",
+  },
+  headline2: {
+    margin: 15,
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: Colors.darkest,
+    fontFamily: 'Baloo',
+    justifyContent: "center",
+  },
+  form: {
+    width: '90%',
+    justifyContent: 'center',
+    margin: 15
+  },
+  label: {
+    fontFamily: 'Baloo',
+    padding: 10
+  },
+  input: {
+    padding: 10,
+    backgroundColor: Colors.dark,
+    fontFamily: 'Baloo'
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textBG: {
+
   }
 });
 
 export default HomeScreen;
 
-/* 
+/*
 export default class App extends React.Component {
   async componentDidMount() {
     await Font.loadAsync({
@@ -86,7 +202,7 @@ export default class App extends React.Component {
     });
     this.setState({fontLoaded: true});
   }
-  
+
   state = {
     loggedIn: false,
     facebookUserInfo: {},
@@ -126,7 +242,7 @@ export default class App extends React.Component {
         this.setState({
         loggedIn: true,
         facebookUserInfo
-        
+
       });
       } else {
         // type === 'cancel'
@@ -158,22 +274,22 @@ export default class App extends React.Component {
   logOut = () => {
     this.setState({
       loggedIn: false,
-      facebookUserInfo: {} 
+      facebookUserInfo: {}
     });
   }
 
-  
-  
+
+
   landingScreen = () => {
     return this.state.loggedIn ? (
       <View>
         <Text>Hi {this.state.facebookUserInfo.name}</Text>
-        
+
         <Button onPress={this.logOut}>
-          Logout          
+          Logout
         </Button>
         <NavBar/>
-        
+
       </View>
     ) : (
       <View style={styles.container}>
@@ -181,7 +297,7 @@ export default class App extends React.Component {
           <Image style={styles.imgstyle} source={require('../../assets/images/IconBeer.png')}/>
         </View>
         <Text style={styles.headerText}>You must be signed in to use this app, registration is free!</Text>
-        
+
         <View style={styles.buttonLine}>
           <Button onPress={this.logIn}>Sign In</Button>
           <Button onPress={() => {
@@ -220,7 +336,7 @@ export default class App extends React.Component {
     }
   };
 
-    
+
 } */
 
 /* const styles = StyleSheet.create({
@@ -246,7 +362,7 @@ export default class App extends React.Component {
     borderRadius: 10,
     borderColor: Colors.darkest,
     borderWidth: 3
-    
+
   },
   buttonText: {
     color: Colors.light,
@@ -283,6 +399,6 @@ export default class App extends React.Component {
   },
   imgView: {
     justifyContent: 'flex-start',
-    
+
   }
 }); */

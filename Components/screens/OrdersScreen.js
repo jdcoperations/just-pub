@@ -5,28 +5,42 @@ import { useSelector, useDispatch } from 'react-redux';
 import Colors from '../../Constants/colors';
 import PubBackground from '../PubBackground';
 
-import { CATEGORIES } from '../../data/categories';
 import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Button from '../Button/Button';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import HeaderButton from '../Button/HeaderButton';
-import * as categoriesActions from '../../store/actions/categories';
+import * as ordersActions from '../../store/actions/orders';
 
-const MenuScreen = props => {
+
+const OrdersScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
-    const categories = useSelector(state => state.categories.availableCategories);
+    const orders = useSelector(state => state.orders.openOrders);
     const dispatch = useDispatch();
 
-    const PubId = props.navigation.getParam('pubId');
+    //const PubId = props.navigation.getParam('pubId');
+    const Pubid = '6c69c5dc-2d64-4c85-9009-3ad0562d4b6d';
 
-    const loadCats = useCallback(async () => {
+    const loadOrders = useCallback(async () => {
         setError(null);
         setIsLoading(true);
         try {
-            await dispatch(categoriesActions.fetchCategories(PubId));
+            
+            await dispatch(ordersActions.fetchOrders(Pubid));
         } catch (err) {
             console.log('error in fetchCats' + err.message);
+            setError(err.message);
+        }
+        setIsLoading(false);
+    }, [dispatch, setIsLoading, setError]);
+
+    const updateOrders = useCallback(async (pubId, orderId, status) => {
+        setError(null);
+        setIsLoading(true);
+        try {
+            await dispatch(ordersActions.updateOrder(pubId, orderId, status))
+        } catch (err) {
+            console.log('error in update:' + err);
             setError(err.message);
         }
         setIsLoading(false);
@@ -35,17 +49,17 @@ const MenuScreen = props => {
     useEffect(() => {
         const willFocusSub = props.navigation.addListener(
             'willFocus',
-            loadCats
+            loadOrders
         );
 
         return () => {
             willFocusSub.remove();
         };
-    }, [loadCats]);
+    }, [loadOrders]);
 
     useEffect(() => {
-        loadCats();
-    }, [dispatch, loadCats]);
+        loadOrders();
+    }, [dispatch, loadOrders]);
 
     if (isLoading) {
         return (
@@ -57,7 +71,7 @@ const MenuScreen = props => {
         );
     }
 
-    if (!isLoading && categories.length === 0) {
+    if (!isLoading && orders.length === 0) {
         return (
             <View style={styles.centered}>
                 <Text>No products found. Maybe start adding some!</Text>
@@ -65,24 +79,25 @@ const MenuScreen = props => {
         );
     }
     const renderGridItem = itemData => {
+        const id = itemData.item.id;
         return (
             <TouchableOpacity
                 style={styles.gridItem}
                 onPress={() => {
+                    updateOrders(Pubid, id, "ACCEPTED");
                     props.navigation.navigate({
-                        routeName: 'Menu2',
+                        routeName: 'Process',
                         params: {
-                            pubId: PubId,
-                            menuClass: itemData.item.name
+                            orderId: id
+                           
 
                         }
                     });
                 }}>
                 <View>
-                    <Image style={styles.imgStyle} source={{
-                        uri: `${itemData.item.iconUrl}`
-                    }} />
-                    <Text style={styles.headline}>{itemData.item.name}</Text>
+                   
+                    <Text style={styles.headline}>Table: {itemData.item.tableNo}</Text>
+                    <Text style={styles.headline}>Table: {itemData.item.id}</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -94,36 +109,15 @@ const MenuScreen = props => {
         <PubBackground>
             <View style={styles.screen}>
                 <FlatList
-                    keyExtractor={(item, index) => item.name}
-                    data={categories}
+                    keyExtractor={(item, index) => item.id}
+                    data={orders}
                     renderItem={renderGridItem}
-                    numColumns={2}
+                    numColumns={1}
                 />
             </View>
         </PubBackground>
     );
-};
 
-MenuScreen.navigationOptions = navigationData => {
-    const PubId = navigationData.navigation.getParam('pubId');
-    return {
-        headerRight: () =>
-            <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                <Item
-                    title="Tray"
-                    iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-                    onPress={() => {
-                        navigationData.navigation.navigate({
-                            routeName: 'Tray',
-                            params: {
-                                pubId: PubId
-                            }
-                        });
-                    }} />
-            </HeaderButtons>
-        ,
-        headerTitle: 'Menu'
-    }
 };
 
 const styles = StyleSheet.create({
@@ -158,4 +152,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default MenuScreen;
+export default OrdersScreen;

@@ -15,77 +15,26 @@ import Input from '../Input';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
-const formReducer = (state, action) => {
-  if (action.type === FORM_INPUT_UPDATE) {
-   // console.log(state);
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValidities: updatedValidities,
-      inputValues: updatedValues
-    };
-  }
-  return state;
-};
-
-
-const CartScreen = props => {
+const ProcessOrder = props => {
 
   const [error, setError] = useState();
   const dispatch = useDispatch();
   const [tableNo, setTableNo] = useState();
 
-  const [formState, dispatchFormState] = useReducer(formReducer, {
-    inputValues: {
-      tableNo: ''
-    },
-    inputValidities: {
-      tableNo: false
-    },
-    formIsValid: false
-  });
+const orderId = props.navigation.getParam('orderId');
 
-  useEffect(() => {
-    if (error) {
-      Alert.alert('An Error Occurred!', error, [{ text: 'Okay' }]);
-    }
-  }, [error]);
-
-    const inputChangeHandler = useCallback(
-    (inputIdentifier, inputValue, inputValidity) => {
-     setTableNo(inputValue);
-      
-    
-     // console.log('inputChange' + tableNo);
-      dispatchFormState({
-        type: FORM_INPUT_UPDATE,
-        value: inputValue,
-        isValid: inputValidity,
-        input: inputIdentifier
-      });
-    },
-    [dispatchFormState]
-  );
 
   const cartTotalAmount = useSelector(state => state.cart.totalAmount);
-
-  const PubId = props.navigation.getParam('pubId');
-
-  const cartItems = useSelector(state => {
+  const orders = useSelector( state => state.orders.openOrders);
+  const orderIdx = orders.findIndex(order => order.id === orderId);
+  const order = orders[orderIdx];
+  
+  console.log('got order: ' + order.id + 'totalAmount:' + order.totalAmount + 'tableno:' + order.tableNo);
+  //+ 'totalAmount:' + order.totalAmount + 'tableno:' + order.tableNo
+  /* const cartItems = useSelector(state => {
     const transformedCartItems = [];
     // console.log('cart:' + state.cart.items);
-    for (const key in state.cart.items) {
+    for (const key in state.orders.availableOrders) {
       //   console.log('selector' + state.cart.items[key].product);
       transformedCartItems.push({
         productId: key,
@@ -98,9 +47,22 @@ const CartScreen = props => {
     return transformedCartItems.sort((a, b) =>
       a.productId > b.productId ? 1 : -1
     );
-  });
+  }); */
   //  console.log('intray with pubid:' + PubId);
 
+  const cartItems = [];
+for (const key in order.items) {
+    
+    
+    cartItems.push({
+        id: key,
+        product: order.items[key].product,
+        size: order.items[key].size,
+        options: order.items[key].options,
+        price: order.items[key].price
+    });
+};
+console.log(cartItems);
 
 
 
@@ -112,42 +74,24 @@ const CartScreen = props => {
           <Text style={styles.summaryText}>
             Total:{' '}
             <Text style={styles.amount}>
-              £{(cartTotalAmount.toFixed(2))}
+              £{(order.totalAmount.toFixed(2))}
             </Text>
           </Text>
-          <Button
-            color={Colors.dark}
-            title="Order Now"
-            disabled={cartItems.length === 0}
-            onPress={() => {
-              //console.log(props);
-              dispatch(ordersActions.createOrder(cartItems, cartTotalAmount, PubId, tableNo));
-              dispatch(cartActions.clearCart());
-            }}
-          />
+        
         </Card>
-        <Card style={styles.tno}>
-          <Input
-            id="tableNo"
-            label="Table Number:"
-            keyboardType="numeric"
-            required
-            autoCapitalize="none"
-            errorText="Enter Table Number"
-            onInputChange={inputChangeHandler}
-            initialValue=""
-          />
+        <Card style={styles.summary}>
+          <Text style={styles.summaryText}>Table No: {order.tableNo} </Text>
         </Card>
         <FlatList
           data={cartItems}
-          keyExtractor={item => item.productId}
+          keyExtractor={item => item.id}
           renderItem={itemData => (
             <CartItem
               size={itemData.item.size}
               title={itemData.item.product}
               amount={itemData.item.price}
               options={itemData.item.options}
-              deletable
+              
               onRemove={() => {
                 //   console.log('removing prodid:' + itemData.item.productId);
                 dispatch(cartActions.removeFromCart(itemData.item.productId));
@@ -161,8 +105,8 @@ const CartScreen = props => {
   );
 };
 
-CartScreen.navigationOptions = {
-  headerTitle: 'Your Tray'
+ProcessOrder.navigationOptions = {
+  headerTitle: 'Order'
 };
 
 const styles = StyleSheet.create({
@@ -217,4 +161,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CartScreen;
+export default ProcessOrder;

@@ -1,23 +1,27 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Image, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import Button from '../Button/Button';
 
 import HeaderButton from '../../Components/Button/HeaderButton';
+import PubBackground from '../PubBackground';
 
 import { PUBS } from '../../data/pubs';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import colors from '../../Constants/colors';
 
 const PubScreen = props => {
   const PubId = props.navigation.getParam('pubId');
-
+  console.log('in pubscren:' + PubId);
   const selectedPub = PUBS.find(pub => pub.id === PubId);
     
   return (
     <View style={styles.screen}>
+      <PubBackground>
       <Image style={styles.imgStyle} source={{
                         uri: `${selectedPub.ImageUrl}`
                     }} />
       <Button
-        title="Place Your Order!"
         onPress={() => {
           props.navigation.navigate({
             routeName: 'Menu',
@@ -26,13 +30,9 @@ const PubScreen = props => {
             }
           });
         }}
-      />
-      <Button
-        title="Go Back"
-        onPress={() => {
-          props.navigation.pop();
-        }}
-      />
+      >"Place Your Order!</Button>
+      
+      </PubBackground>
     </View>
   );
 };
@@ -72,6 +72,10 @@ const styles = StyleSheet.create({
       height: 300,
       width: 300,
       margin: 10
+  },
+  text: {
+    fontFamily: 'Baloo',
+    color: colors.white
   }
 });
 

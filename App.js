@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ImageBackground } from 'react';
 import { Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
@@ -8,27 +8,29 @@ import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 
-import PubsNavigator from './Navigation/pubsNavigator';
-import productsReducer from './store/reducers/products';
+import MainNavigator from './Navigation/pubsNavigator';
+
 import cartReducer from './store/reducers/cart';
 import ordersReducer from './store/reducers/orders';
+import categoriesReducer from './store/reducers/categories';
+import itemsReducer from './store/reducers/items';
+
+const drinkImage = require('./assets/images/pint.jpg');
 
 const rootReducer = combineReducers({
-  products: productsReducer,
   cart: cartReducer,
-  orders: ordersReducer
+  orders: ordersReducer,
+  categories: categoriesReducer,
+  items: itemsReducer
 });
 enableScreens();
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
  
 const fetchFonts = () => {
-  /* return Font.loadAsync({
-    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
-    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
-  }); */
   return Font.loadAsync({
     'Baloo': require('./assets/fonts/Baloo_Da_2/BalooDa2-Regular.ttf'),
+    'Baloo-bold': require('./assets/fonts/Baloo_Da_2/BalooDa2-Bold.ttf')
   });
 };
 
@@ -46,7 +48,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <PubsNavigator />
+      <MainNavigator />
     </Provider>
   );
 }

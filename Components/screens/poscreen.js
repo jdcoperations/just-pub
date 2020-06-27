@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import { useDispatch } from 'react-redux';
 
 import Colors from '../../Constants/colors';
+import PubBackground from '../PubBackground';
 
 import { MENU } from '../../data/menus';
 import { FlatList } from 'react-native-gesture-handler';
@@ -89,7 +90,7 @@ const poscreen = props => {
 
     renderGridItem = itemData => {
         var size = itemData.item.size;
-        console.log("renderGrid:" + itemData.item.name + ":" + itemData.item.size + ":" + itemData.item.isSelected);
+       // console.log("renderGrid:" + itemData.item.name + ":" + itemData.item.size + ":" + itemData.item.isSelected + ':' + itemData.item.price + ':');
 
 
         return (
@@ -128,7 +129,7 @@ const poscreen = props => {
         //console.log(prices);
         var size = prices.map(item => {
             if (item.isSelected) {
-                console.log(item);
+              //  console.log(item);
                 name = item.name;
                 return item.size;
             }
@@ -139,21 +140,21 @@ const poscreen = props => {
                 return item.price;
             }
         });
-        console.log('in addtoorder' + price);
+    //    console.log('in addtoorder' + price);
         var selectedoptions = options.map(item => {
             if (item.isSelected) {
                 return item.name;
             }
         });
         //console.log('size:' + size + ' options:' + options + ' name:' + selectedProduct);
-        console.log('b4thiitem:' + price);
+     //   console.log('b4thiitem:' + price);
         price = price.toString().replace(',','');
         price = parseFloat(price);
-        console.log(price);
+      //  console.log(price);
         const thisitem = new CartItem(1,
             selectedProduct, size, selectedoptions, price
         );
-            console.log('thiitem:' + thisitem.price);
+     //       console.log('thiitem:' + thisitem.price);
         dispatch(cartActions.addToCart(thisitem));
 
 
@@ -166,24 +167,24 @@ const poscreen = props => {
             <AppLoading
                 startAsync={fetchData(item)}
                 onFinish={() => {
-                    console.log('data-loaded');
+                 //   console.log('data-loaded');
                     setdataLoaded(true);
                 }}
             />
         )
     }
     return (
-
+        <PubBackground>
         <View>
             <Text style={styles.headline}>
                 {item.title}
             </Text>
-            <FlatList
+        {    <FlatList
                 keyExtractor={(item, index) => item.size}
                 data={prices}
                 renderItem={renderGridItem}
                 numColumns={1}
-            />
+            />}
             <Text style={styles.headline}>
                 Options:
             </Text>
@@ -196,6 +197,7 @@ const poscreen = props => {
             <Button title="Add to Order!"
                 onPress={addToOrder} />
         </View>
+        </PubBackground>
 
     )
 };
@@ -203,7 +205,7 @@ const poscreen = props => {
 poscreen.navigationOptions = props => {
     const menuClass = props.navigation.getParam('menuClass');
     const PubId = props.navigation.getParam('pubId');
-    console.log('poscreen-nav:' + PubId);
+   // console.log('poscreen-nav:' + PubId);
     return {
       headerRight: () =>
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
         flex: 1,
         margin: 15,
         padding: 20,
-        borderColor: Colors.darkest,
+        borderColor: Colors.white,
         borderRadius: 10,
         borderWidth: 1,
         width: '90%',
@@ -263,7 +265,7 @@ const styles = StyleSheet.create({
         margin: 10,
         fontWeight: 'bold',
         fontSize: 20,
-        color: Colors.dark,
+        color: Colors.white,
         fontFamily: 'Baloo',
         justifyContent: "center",
     },

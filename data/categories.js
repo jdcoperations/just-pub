@@ -1,7 +1,5 @@
 import CategoriesModel from '../models/categoriesModel';
 
-import {WINE} from '../assets/images/wine.png';
-
 export const CATEGORIES = [
     new CategoriesModel('Lager','https://img.icons8.com/cotton/64/000000/beer-glass.png'),
     new CategoriesModel('Bitter','https://img.icons8.com/cotton/64/000000/beer.png'),

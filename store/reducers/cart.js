@@ -1,7 +1,6 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, CLEAR_CART } from '../actions/cart';
+import { ADD_TO_CART, REMOVE_FROM_CART, CLEAR_CART} from '../actions/cart';
 import { ADD_ORDER } from '../actions/orders';
 import CartItem from '../../models/cart-item';
-import { DELETE_PRODUCT } from '../actions/products';
 
 
 const initialState = {
@@ -26,7 +25,7 @@ export default (state = initialState, action) => {
       const prodOptions = addedProduct.options;
       var newTotal = 0;
       let updatedOrNewCartItem;
-      console.log('in cart-reducer.  price:' + prodPrice + 'product title:' + prodTitle + 'size:' + prodSize + 'options:' + prodOptions + 'prodId' + prodId);
+    //  console.log('in cart-reducer.  price:' + prodPrice + 'product title:' + prodTitle + 'size:' + prodSize + 'options:' + prodOptions + 'prodId' + prodId);
       //if (state.items[addedProduct.id]) {
       // already have the item in the cart
       //updatedOrNewCartItem = new CartItem(
@@ -52,11 +51,11 @@ export default (state = initialState, action) => {
         prodId: prodId
       };
     case REMOVE_FROM_CART:
-      console.log('request to remove item id:' + state.items[action.pid]);
+   //   console.log('request to remove item id:' + state.items[action.pid]);
       const selectedCartItem = state.items[action.pid];
       //const currentQty = selectedCartItem.quantity;
       const prodPriceRemoved = selectedCartItem.price
-      console.log('prodPriceRemoved:' + prodPriceRemoved + 'totalAmount:' + state.totalAmount);
+    //  console.log('prodPriceRemoved:' + prodPriceRemoved + 'totalAmount:' + state.totalAmount);
       let updatedCartItems;
       /* if (currentQty > 1) {
         // need to reduce it, not erase it
@@ -78,24 +77,15 @@ export default (state = initialState, action) => {
       };
     case ADD_ORDER:
       return initialState;
-    case DELETE_PRODUCT:
-      if (!state.items[action.pid]) {
-        return state;
-      }
-      const updatedItems = { ...state.items };
-      const itemTotal = state.items[action.pid].sum;
-      delete updatedItems[action.pid];
-      return {
-        ...state,
-        items: updatedItems,
-        totalAmount: state.totalAmount - itemTotal
-      };
+    
     case CLEAR_CART:
       return {
         ...state,
         items: {},
         totalAmount: 0
       };
+    
+      
   }
 
   return state;

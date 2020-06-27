@@ -1,19 +1,25 @@
-import PRODUCTS from '../../data/dummy-data';
+
 import {
-  DELETE_PRODUCT,
-  CREATE_PRODUCT,
-  UPDATE_PRODUCT
-} from '../actions/products';
+  DELETE_CAT,
+  CREATE_CAT,
+  UPDATE_CAT,
+  SET_CAT
+} from '../actions/categories';
 import Product from '../../models/products';
+import { CATEGORIES } from '../../data/categories';
 
 const initialState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter(prod => prod.ownerId === 'u1')
+  availableCategories: CATEGORIES,
+  // userProducts: PRODUCTS.filter(prod => prod.ownerId === 'u1')
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case CREATE_PRODUCT:
+      case SET_CAT:
+          return {
+              availableCategories: action.categories
+          };
+    case CREATE_CAT:
       const newProduct = new Product(
         new Date().toString(),
         'u1',
@@ -27,7 +33,7 @@ export default (state = initialState, action) => {
         availableProducts: state.availableProducts.concat(newProduct),
         userProducts: state.userProducts.concat(newProduct)
       };
-    case UPDATE_PRODUCT:
+    case UPDATE_CAT:
       const productIndex = state.userProducts.findIndex(
         prod => prod.id === action.pid
       );
@@ -51,7 +57,7 @@ export default (state = initialState, action) => {
         availableProducts: updatedAvailableProducts,
         userProducts: updatedUserProducts
       };
-    case DELETE_PRODUCT:
+    case DELETE_CAT:
       return {
         ...state,
         userProducts: state.userProducts.filter(
