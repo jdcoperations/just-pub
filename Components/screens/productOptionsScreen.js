@@ -131,7 +131,7 @@ class productOptions extends React.Component {
     };
 
     addToOrder = () => {
-        console.log('in add to order');
+       // console.log('in add to order');
         
         //console.log('state: ' + state);
         var prices = this.state.prices;

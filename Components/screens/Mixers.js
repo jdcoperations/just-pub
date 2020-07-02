@@ -12,14 +12,14 @@ import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Button from '../Button/Button';
 import * as itemsActions from '../../store/actions/items';
 
-const MenuDetail = props => {
-    const [isLoading, setIsLoading] = useState(false);
+const Mixers = props => {
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState();
-    const items = useSelector(state => state.items.availableItems);
+    const items = useSelector(state => state.items.availableMixers);
+    const PubId = useSelector(state => state.pub.pubId);
     const dispatch = useDispatch();
-
-    const PubId = props.navigation.getParam('pubId');
-    const catId = props.navigation.getParam('menuClass');
+console.log('in mixer with pubid; ' + PubId + ' items: ' + items);
+    const catId = 'mixers';
    // console.log('pubid:' +  PubId + ' menuClass:' + catId);
 
     const loadItems = useCallback(async () => {
@@ -28,16 +28,16 @@ const MenuDetail = props => {
        // console.log('pre-try');
         try {
          //   console.log('menu2 in try block');
-            await dispatch(itemsActions.fetchItems(PubId, catId));
+            await dispatch(itemsActions.getMixers(PubId, catId));
         } catch (err) {
-       //     console.log('error in fetchItems' + err.message);
+            console.log('error in fetchItems' + err.message);
             setError(err.message);
         }
         setIsLoading(false);
     }, [dispatch, setIsLoading, setError]);
 
    // console.log('menu2 sect 2');
-    useEffect(() => {
+   /*  useEffect(() => {
         const willFocusSub = props.navigation.addListener(
             'willFocus',
             loadItems
@@ -46,7 +46,7 @@ const MenuDetail = props => {
         return () => {
             willFocusSub.remove();
         };
-    }, [loadItems]);
+    }, [loadItems]); */
 
     useEffect(() => {
         loadItems();
@@ -74,17 +74,11 @@ const MenuDetail = props => {
             <TouchableOpacity
                 style={styles.gridItem}
                 onPress={() => {
-                    props.navigation.navigate({
-                        routeName: 'ProductOpts2',
-                        params: {
-                            product: itemData,
-                            pubId: PubId
-                        }
-                    });
+                    setModalVisible(!modalVisable)
                 }}>
                 <View>
                     
-                    <Text style={styles.headline}>{itemData.item.title}</Text>
+                    <Text style={styles.headline}>{itemData.item.name}</Text><Text>{itemData.item.price}</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -96,7 +90,7 @@ const MenuDetail = props => {
     //const FILTERED_ITEMS = MENU.filter(menuItem => menuItem.pubId.indexOf(props.navigation.getParam('pubId')) >= 0 && menuItem.classification.indexOf(props.navigation.getParam('menuClass')) >= 0);
     
     return (
-        <PubBackground>
+       
             <View style={styles.view}>
         <FlatList
             keyExtractor={(item, index) => item.id}
@@ -105,32 +99,10 @@ const MenuDetail = props => {
             numColumns={1}
         />
         </View>
-        </PubBackground>
+        
     );
 };
 
-MenuDetail.navigationOptions = navigationData => {
-    const menuClass = navigationData.navigation.getParam('menuClass');
-    const PubId = navigationData.navigation.getParam('pubId');
-    return {
-      headerRight: () =>
-        <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item
-            title="Tray"
-            iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-            onPress={() => {
-                navigationData.navigation.navigate({
-                    routeName: 'Tray',
-                    params: {
-                      pubId: PubId
-                    }
-                  });
-            }}/>
-        </HeaderButtons>
-      ,
-      headerTitle: menuClass
-    };
-  };
 
 const styles = StyleSheet.create({
     screen: {
@@ -167,4 +139,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default MenuDetail;
+export default Mixers;

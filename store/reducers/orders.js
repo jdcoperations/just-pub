@@ -1,4 +1,4 @@
-import { ADD_ORDER, SET_ORDERS, GET_ORDER, UPDATE_ORDERS } from '../actions/orders';
+import { ADD_ORDER, SET_ORDERS, GET_ORDER, UPDATE_ORDERS, CLEAR_ORDERS } from '../actions/orders';
 import { CREATE_ORDER } from '../actions/orders';
 
 import Order from '../../models/order';
@@ -25,6 +25,11 @@ export default (state = initialState, action) => {
         ...state,
         orders: state.orders.concat(newOrder)
       };
+      case CLEAR_ORDERS:
+        return {
+          ...state,
+          openOrders: {}
+        }
     case CREATE_ORDER:
       const newOrder1 = new Order(
         '1',
@@ -40,11 +45,11 @@ export default (state = initialState, action) => {
 
     case GET_ORDER:
       const orderId = action.orderId;
-      console.log('orderID:' + orderId);
+     // console.log('orderID:' + orderId);
 
 
     case UPDATE_ORDERS:
-      console.log(state.openOrders);
+     // console.log(state.openOrders);
       
       const updatedOrders = [...state.openOrders];
       

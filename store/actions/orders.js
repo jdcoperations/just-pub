@@ -3,6 +3,7 @@ export const CREATE_ORDER = 'CREATE_ORDER';
 export const SET_ORDERS = 'SET-ORDERS';
 export const UPDATE_ORDERS = 'UPDATE-ORDERS';
 export const GET_ORDER = 'GET_ORDER';
+export const CLEAR_ORDERS = 'CLEAR_ORDERS';
 
 
 import Order from '../../models/order';
@@ -18,7 +19,7 @@ export const fetchOrders = (pubId) => {
       );
 
       if (!response.ok) {
-        console.log('error in fetch orders');
+    //    console.log('error in fetch orders');
         throw new Error('Something went wrong!');
       }
 
@@ -28,6 +29,8 @@ export const fetchOrders = (pubId) => {
       for (const key in resData) {
         //console.log('inorders:' + resData);
         if (resData[key].orderStatus === "NEW ORDER") {
+         // console.log(resData[key].cartItems[0].options);
+          
           loadedProducts.push(
             new Order(
               key,
@@ -48,6 +51,10 @@ export const fetchOrders = (pubId) => {
       throw err;
     }
   };
+};
+
+export const clearOrders = (pubid) => {
+  return {type: CLEAR_ORDERS};
 };
 
 export const addOrder = (cartItems, totalAmount, pubId) => {
@@ -103,7 +110,7 @@ export const createOrder = (cartItems, totalAmount, pubId, tableNo) => {
 };
 
 export const updateOrder = (pubId, id, orderStatus) => {
-  console.log('in update order. id:' + id + ' status:' + orderStatus);
+ // console.log('in update order. id:' + id + ' status:' + orderStatus);
   
   return async dispatch => {
    
@@ -123,17 +130,17 @@ export const updateOrder = (pubId, id, orderStatus) => {
       );
 
       if (!response.ok) {
-        console.log('error in update order');
+      //  console.log('error in update order');
         throw new Error('Something went wrong!');
       }
-      console.log('response:' + response);
+    //  console.log('response:' + response);
       dispatch({
         type: UPDATE_ORDERS,
         pid: id,
         orderStatus: orderStatus
       });
     } catch (err) {
-      console.log('error: ' + err);
+     // console.log('error: ' + err);
     }
   };
 
@@ -141,7 +148,7 @@ export const updateOrder = (pubId, id, orderStatus) => {
 };
 
 export const getOrder = (orderId) => {
-  console.log('in getorder');
+ // console.log('in getorder');
   return {
     type: GET_ORDER,
     orderId: orderId

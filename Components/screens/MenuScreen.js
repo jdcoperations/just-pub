@@ -26,7 +26,7 @@ const MenuScreen = props => {
         try {
             await dispatch(categoriesActions.fetchCategories(PubId));
         } catch (err) {
-            console.log('error in fetchCats' + err.message);
+       //     console.log('error in fetchCats' + err.message);
             setError(err.message);
         }
         setIsLoading(false);
@@ -60,7 +60,7 @@ const MenuScreen = props => {
     if (!isLoading && categories.length === 0) {
         return (
             <View style={styles.centered}>
-                <Text>No products found. Maybe start adding some!</Text>
+                <Text>No products found. </Text>
             </View>
         );
     }
@@ -69,7 +69,17 @@ const MenuScreen = props => {
             <TouchableOpacity
                 style={styles.gridItem}
                 onPress={() => {
-                    props.navigation.navigate({
+                    if (itemData.item.name === 'Bar Snacks') {
+                        props.navigation.navigate({
+                            routeName: 'SnackScreen',
+                            params: {
+                                pubId: PubId,
+                                menuClass: itemData.item.name
+    
+                            }
+                        });
+                    } else {
+                        props.navigation.navigate({
                         routeName: 'Menu2',
                         params: {
                             pubId: PubId,
@@ -77,6 +87,7 @@ const MenuScreen = props => {
 
                         }
                     });
+                }
                 }}>
                 <View>
                     <Image style={styles.imgStyle} source={{

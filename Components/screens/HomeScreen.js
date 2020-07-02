@@ -1,20 +1,20 @@
 import React, { useReducer, useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, ImageBackground } from 'react-native';
-import * as Font from 'expo-font';
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, ImageBackground, AsyncStorage } from 'react-native';
+
 import { useSelector, useDispatch } from 'react-redux';
 import Colors from '../../Constants/colors';
 
-import { PUBS } from '../../data/pubs';
-import { ScrollView, FlatList } from 'react-native-gesture-handler';
+
 import Button from '../Button/Button';
 import HeaderButton from '../Button/HeaderButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import Input from '../Input';
+
 import Card from '../Card';
 
 const drinkImage = require('../../assets/images/pint.jpg');
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDTE';
-const image = { uri: "" };
+
+import * as authActions from '../../store/actions/auth';
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
@@ -40,7 +40,9 @@ const formReducer = (state, action) => {
 };
 
 const HomeScreen = props => {
+  const [signedIn, setSignedIn] = useState(false);
   const dispatch = useDispatch();
+  const [isStaff, setIsStaff] = useState(false);
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
       email: '',
@@ -65,6 +67,36 @@ const HomeScreen = props => {
     },
     [dispatchFormState]
   );
+
+  const nextAction = async () => {
+    const userData = await AsyncStorage.getItem('userData');
+
+    if (!userData) {
+      setSignedIn(false);
+    } else {
+    const transformedUD = JSON.parse(userData);
+    const { token, userId, expiryDate, staffPubs } = transformedUD;
+   // console.log('nextScreen: ' + staffPubs.length);
+    if (staffPubs.length > 0) {
+      setIsStaff(true);
+    }
+    const expirationDate = new Date(expiryDate);
+
+    if (expirationDate <= new Date() || !token || !userId) {
+      setSignedIn(false);
+    } else {
+      setSignedIn(true);
+    }
+    //console.log('am i siged in? ' + signedIn);
+  };
+  }
+
+  nextAction();
+
+  const localLogout = () => {
+    authActions.logout();
+    nextAction();
+  }
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -84,18 +116,22 @@ const HomeScreen = props => {
               Order your drinks from the comfort of your table and pay by contactless when your drinks are delivered.
             </Text>
             <Text style={styles.headline2}>
-              Please Login/Signup to continue.
+              {signedIn ? 'You are already signed in, so just press continue to place an order!' : 'Please Login/Signup to continue.'}
             </Text>
           </View>
         </Card>
         <Button onPress={() => {
-          props.navigation.navigate({
-            routeName: 'Login',
+          {signedIn ? 
+            localLogout()
+            
+              : props.navigation.navigate({
+            routeName: 'Login',})}
 
-          });
-
-        }}>Login/Signup</Button>
-      </ImageBackground>
+        }}>{signedIn ? 'Logout' : 'Login/Signup'}</Button>
+        {signedIn ? <Button onPress={() => {
+          {isStaff ? props.navigation.navigate({routeName: 'Orders'}) : props.navigation.navigate({routeName: 'scan'})}
+        }}>Continue</Button> : null }
+     </ImageBackground>
 
 
 

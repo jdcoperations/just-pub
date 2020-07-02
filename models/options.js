@@ -1,5 +1,6 @@
 class optionsModel {
-    constructor (name, isSelected) {
+    constructor (id, name, isSelected) {
+        this.id = id,
         this.name = name;
         this.isSelected = isSelected;
     }

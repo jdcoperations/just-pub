@@ -15,8 +15,8 @@ const CartItem = props => {
     <View style={styles.cartItem}>
       <View>
       <View style={styles.itemData}>
-        <Text style={styles.quantity}>{props.size} </Text>
-        <Text style={styles.mainText}>{props.title}</Text>
+        <Text style={styles.quantity}>{props.title} </Text>
+        <Text style={styles.mainText}>{props.size}</Text>
       </View>
       <View style={styles.options}>
         <Text>{props.options}</Text>

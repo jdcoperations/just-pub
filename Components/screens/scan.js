@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Alert, AsyncStorage } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useSelector, useDispatch } from 'react-redux';
+import * as pubActions from '../../store/actions/pub';
 
 export default function Scan(props) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -13,9 +16,19 @@ export default function Scan(props) {
     })();
   }, []);
 
+  const setPub = async (pubId) => {
+    const action = pubActions.setPub(pubId);
+    try {
+      await dispatch(action);
+    } catch (err) {
+   //   console.log('scanner error:' + err);
+    }
+  };
+
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    setPub(data);
     props.navigation.navigate({
         routeName: 'Pub',
         params: {
@@ -38,6 +51,7 @@ export default function Scan(props) {
         flexDirection: 'column',
         justifyContent: 'flex-end',
       }}>
+        
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}

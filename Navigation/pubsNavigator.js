@@ -6,7 +6,6 @@ import { createAppContainer } from 'react-navigation';
 import PubsScreen from '../Components/screens/PubsScreen';
 import HomeScreen from '../Components/screens/HomeScreen';
 import PubScreen from '../Components/screens/PubScreen';
-import SignInScreen from '../Components/screens/SignInScreen';
 import MenuScreen from '../Components/screens/MenuScreen';
 import Menu2 from '../Components/screens/Menu2';
 import productOptions from '../Components/screens/productOptionsScreen';
@@ -18,6 +17,7 @@ import HeaderButton from '../Components/Button/HeaderButton';
 import Login from '../Components/screens/LoginSignup';
 import OrdersScreen from '../Components/screens/OrdersScreen';
 import ProcessOrder from '../Components/screens/ProcessOrder';
+import snackscreen from '../Components/screens/snackscreen';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -27,16 +27,15 @@ import Colors from '../Constants/colors';
 
 const StaffNavigator = createStackNavigator(
     {
-        
+        Login: {
+            screen: Login
+        },
         Orders: {
             screen: OrdersScreen
         },
         Process: {
             screen: ProcessOrder
-        },
-        Login: {
-            screen: Login
-        },
+        }
     },
     
 );
@@ -64,9 +63,6 @@ const PubsNavigator = createStackNavigator(
         Pub: {
             screen: PubScreen
         },
-        SignIn: {
-            screen: SignInScreen
-        },
         Menu: {
             screen: MenuScreen
         },
@@ -90,6 +86,9 @@ const PubsNavigator = createStackNavigator(
             }
 
         },
+        SnackScreen: {
+            screen: snackscreen
+        },
         Tray: {
             screen: Tray
         },
@@ -102,6 +101,12 @@ const PubsNavigator = createStackNavigator(
         },
         Login: {
             screen: Login
+        }, 
+        Orders: {
+            screen: OrdersScreen
+        },
+        Process: {
+            screen: ProcessOrder
         }
 
     },

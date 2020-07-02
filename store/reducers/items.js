@@ -3,13 +3,18 @@ import {
   DELETE_ITEM,
   CREATE_ITEM,
   UPDATE_ITEM,
-  SET_ITEM
+  SET_ITEM,
+  SET_OPTIONS,
+  SET_MIXERS,
+  SET_SNACKS
 } from '../actions/items';
 import menuModel from '../../models/menuModel';
 import { MENU } from '../../data/menus';
 
 const initialState = {
-  availableItems: MENU
+  availableItems: MENU,
+  availableOptions: [],
+  availableMixers: []
   // userProducts: PRODUCTS.filter(prod => prod.ownerId === 'u1')
 };
 
@@ -20,6 +25,21 @@ export default (state = initialState, action) => {
           return {
               availableItems: action.items
           };
+      case SET_OPTIONS:
+        return {
+          ...state,
+          availableOptions: action.availableOptions
+        };
+        case SET_MIXERS:
+          return {
+            ...state,
+            availableMixers: action.availableMixers
+          }
+          case SET_SNACKS:
+            return {
+              ...state,
+              availableSnacks: action.availableSnacks
+            }
     case CREATE_ITEM:
       const newProduct = new Product(
         new Date().toString(),

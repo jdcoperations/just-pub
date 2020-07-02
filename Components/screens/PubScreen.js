@@ -12,7 +12,7 @@ import colors from '../../Constants/colors';
 
 const PubScreen = props => {
   const PubId = props.navigation.getParam('pubId');
-  console.log('in pubscren:' + PubId);
+  //console.log('in pubscren:' + PubId);
   const selectedPub = PUBS.find(pub => pub.id === PubId);
     
   return (
@@ -30,7 +30,7 @@ const PubScreen = props => {
             }
           });
         }}
-      >"Place Your Order!</Button>
+      >Place Your Order!</Button>
       
       </PubBackground>
     </View>

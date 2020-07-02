@@ -6,10 +6,11 @@ import {
   StyleSheet,
   Button,
   ActivityIndicator,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Input from '../Input';
 import Card from '../Card';
@@ -47,15 +48,18 @@ const AuthScreen = props => {
   const [error, setError] = useState();
   const [isSignup, setIsSignup] = useState(false);
   const dispatch = useDispatch();
+  const staffPubs = useSelector(state => state.token);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
       email: '',
-      password: ''
+      password: '',
+      staffPubs: ''
     },
     inputValidities: {
       email: false,
-      password: false
+      password: false,
+      staffPubs: true
     },
     formIsValid: false
   });
@@ -66,6 +70,26 @@ const AuthScreen = props => {
     }
   }, [error]);
 
+  const nextScreen = async () => {
+    const userData = await AsyncStorage.getItem('userData');
+    if (!userData) {
+      Alert.alert('Just-Pub!', 'An error ocurred creating account');
+      return 'HomeScreen';
+    };
+    const transformedUD = JSON.parse(userData);
+    const {token, userId, expiryDate, staffPubs} = transformedUD;
+   // console.log('nextScreen: ' + staffPubs.length);
+    if (staffPubs.length > 0) {
+  //    console.log('staffPubs: ' + staffPubs);
+  //    Alert.alert('Just-Pub!', 'Welcome ' + userId + '!');
+      props.navigation.navigate('Orders');
+      return;
+    } else {
+      Alert.alert('Just-Pub!', 'Please scan the pubs QR code to continue!');
+      props.navigation.navigate('scan');
+      return;
+    };
+  };
   const authHandler = async () => {
     let action;
     if (isSignup) {
@@ -83,7 +107,12 @@ const AuthScreen = props => {
     setIsLoading(true);
     try {
       await dispatch(action);
-      props.navigation.navigate('scan');
+      
+      
+    //  console.log('back in auth screen-staffpubs:' + staffPubs);
+      nextScreen();
+    //  console.log('NExtScreen:'+Nextscreen);
+    //  props.navigation.navigate(Nextscreen);
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
@@ -105,7 +134,7 @@ const AuthScreen = props => {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      keyboardVerticalOffset={50}
+      keyboardVerticalOffset={5}
       style={styles.screen}
     >
       <PubBackground>

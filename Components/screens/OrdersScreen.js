@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import * as Font from 'expo-font';
 import { useSelector, useDispatch } from 'react-redux';
 import Colors from '../../Constants/colors';
@@ -14,8 +14,9 @@ import * as ordersActions from '../../store/actions/orders';
 
 const OrdersScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState();
-    const orders = useSelector(state => state.orders.openOrders);
+    var orders = useSelector(state => state.orders.openOrders);
     const dispatch = useDispatch();
 
     //const PubId = props.navigation.getParam('pubId');
@@ -25,10 +26,13 @@ const OrdersScreen = props => {
         setError(null);
         setIsLoading(true);
         try {
-            
+            if (orders.length > 0 ){
+         //       console.log('clearing orders');
+                orders = await dispatch(ordersActions.clearOrders(Pubid));
+            }
             await dispatch(ordersActions.fetchOrders(Pubid));
         } catch (err) {
-            console.log('error in fetchCats' + err.message);
+        //    console.log('error in fetchOrders=' + err.message);
             setError(err.message);
         }
         setIsLoading(false);
@@ -40,26 +44,34 @@ const OrdersScreen = props => {
         try {
             await dispatch(ordersActions.updateOrder(pubId, orderId, status))
         } catch (err) {
-            console.log('error in update:' + err);
+          //  console.log('error in update:' + err);
             setError(err.message);
         }
         setIsLoading(false);
     }, [dispatch, setIsLoading, setError]);
 
-    useEffect(() => {
-        const willFocusSub = props.navigation.addListener(
-            'willFocus',
-            loadOrders
-        );
-
-        return () => {
-            willFocusSub.remove();
-        };
-    }, [loadOrders]);
+      /* useEffect(() => {
+          const willFocusSub = props.navigation.addListener(
+              'willFocus',
+              loadOrders
+          );
+  
+          return () => {
+              willFocusSub.remove();
+          };
+      }, [loadOrders]);  */
 
     useEffect(() => {
         loadOrders();
     }, [dispatch, loadOrders]);
+
+    const onRefreshList = () => {
+        setIsRefreshing(true);
+        orders = [];
+       // console.log('refreshing');
+        loadOrders;
+        setIsRefreshing(false);
+    };
 
     if (isLoading) {
         return (
@@ -73,9 +85,16 @@ const OrdersScreen = props => {
 
     if (!isLoading && orders.length === 0) {
         return (
-            <View style={styles.centered}>
-                <Text>No products found. Maybe start adding some!</Text>
-            </View>
+            <PubBackground>
+                
+                    <View style={styles.centered}>
+                        <Text style={styles.headline}>No new orders found - check back soon!</Text>
+                        <Button onPress={loadOrders}>Refresh!</Button>
+                    </View>
+                
+            </PubBackground>
+
+
         );
     }
     const renderGridItem = itemData => {
@@ -89,15 +108,15 @@ const OrdersScreen = props => {
                         routeName: 'Process',
                         params: {
                             orderId: id
-                           
+
 
                         }
                     });
                 }}>
                 <View>
-                   
+
                     <Text style={styles.headline}>Table: {itemData.item.tableNo}</Text>
-                    <Text style={styles.headline}>Table: {itemData.item.id}</Text>
+
                 </View>
             </TouchableOpacity>
         );
@@ -113,8 +132,12 @@ const OrdersScreen = props => {
                     data={orders}
                     renderItem={renderGridItem}
                     numColumns={1}
+                    refreshing={isLoading}
+                    onRefresh={onRefreshList}
+
                 />
             </View>
+            <Button onPress={loadOrders}>Refresh!</Button>
         </PubBackground>
     );
 
@@ -122,7 +145,7 @@ const OrdersScreen = props => {
 
 const styles = StyleSheet.create({
     screen: {
-      
+        flex: 1,
         width: '100%'
     },
     gridItem: {
@@ -141,6 +164,10 @@ const styles = StyleSheet.create({
     imgStyle: {
         height: 50,
         width: 50,
+    },
+    centered: {
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     headline: {
         marginTop: 10,

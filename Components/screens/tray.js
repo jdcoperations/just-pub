@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, ActionSheetIOS, KeyboardAvoidingView } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, ActionSheetIOS, KeyboardAvoidingView, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PubBackground from '../PubBackground';
@@ -44,7 +44,7 @@ const CartScreen = props => {
 
   const [error, setError] = useState();
   const dispatch = useDispatch();
-  const [tableNo, setTableNo] = useState();
+  const [tableNo, setTableNo] = useState('0');
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -118,11 +118,13 @@ const CartScreen = props => {
           <Button
             color={Colors.dark}
             title="Order Now"
-            disabled={cartItems.length === 0}
+            disabled={cartItems.length === 0 || tableNo === "0"}
             onPress={() => {
               //console.log(props);
               dispatch(ordersActions.createOrder(cartItems, cartTotalAmount, PubId, tableNo));
               dispatch(cartActions.clearCart());
+              Alert.alert('Just-Pub!', 'Order placed!');
+              props.navigation.navigate('Home');
             }}
           />
         </Card>
@@ -135,7 +137,7 @@ const CartScreen = props => {
             autoCapitalize="none"
             errorText="Enter Table Number"
             onInputChange={inputChangeHandler}
-            initialValue=""
+            initialValue="0"
           />
         </Card>
         <FlatList
@@ -143,8 +145,8 @@ const CartScreen = props => {
           keyExtractor={item => item.productId}
           renderItem={itemData => (
             <CartItem
-              size={itemData.item.size}
               title={itemData.item.product}
+              size={itemData.item.size}
               amount={itemData.item.price}
               options={itemData.item.options}
               deletable
